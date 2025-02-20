@@ -10,12 +10,23 @@ import { toast } from "sonner";
 interface Company {
   id: string;
   name: string;
+  industry: string;
+  created_at: string;
 }
 
 interface JobRole {
   id: string;
   title: string;
   company_id: string;
+  created_at: string;
+}
+
+interface InterviewSession {
+  id: string;
+  user_id: string;
+  role_id: string;
+  status: 'pending' | 'completed' | 'in_progress';
+  created_at: string;
 }
 
 const Setup = () => {
@@ -37,10 +48,10 @@ const Setup = () => {
     const fetchCompanies = async () => {
       try {
         const { data, error } = await supabase
-          .from("companies")
-          .select("*");
+          .from('companies')
+          .select('*');
         if (error) throw error;
-        setCompanies(data);
+        setCompanies(data || []);
       } catch (error: any) {
         toast.error("Failed to fetch companies");
       }
@@ -60,11 +71,11 @@ const Setup = () => {
 
       try {
         const { data, error } = await supabase
-          .from("job_roles")
-          .select("*")
-          .eq("company_id", selectedCompany);
+          .from('job_roles')
+          .select('*')
+          .eq('company_id', selectedCompany);
         if (error) throw error;
-        setRoles(data);
+        setRoles(data || []);
       } catch (error: any) {
         toast.error("Failed to fetch roles");
       }
@@ -84,16 +95,18 @@ const Setup = () => {
       if (!user) throw new Error("No user found");
 
       const { data, error } = await supabase
-        .from("interview_sessions")
+        .from('interview_sessions')
         .insert({
           user_id: user.id,
           role_id: selectedRole,
-          status: "pending"
-        })
+          status: 'pending'
+        } as Partial<InterviewSession>)
         .select()
         .single();
 
       if (error) throw error;
+      if (!data) throw new Error("No data returned");
+      
       navigate(`/interview/${data.id}`);
     } catch (error: any) {
       toast.error("Failed to start interview");

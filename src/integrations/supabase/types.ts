@@ -9,7 +9,216 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      companies: {
+        Row: {
+          created_at: string
+          id: string
+          industry: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      interview_sessions: {
+        Row: {
+          audio_url: string | null
+          created_at: string
+          feedback: Json | null
+          id: string
+          role_id: string | null
+          score: number | null
+          status: Database["public"]["Enums"]["interview_status"] | null
+          user_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          created_at?: string
+          feedback?: Json | null
+          id?: string
+          role_id?: string | null
+          score?: number | null
+          status?: Database["public"]["Enums"]["interview_status"] | null
+          user_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          created_at?: string
+          feedback?: Json | null
+          id?: string
+          role_id?: string | null
+          score?: number | null
+          status?: Database["public"]["Enums"]["interview_status"] | null
+          user_id?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_sessions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "job_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_roles: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          id: string
+          title: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          title: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          created_at: string
+          difficulty_level: string | null
+          id: string
+          question: string
+          question_type: string
+          role_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          question: string
+          question_type: string
+          role_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          question?: string
+          question_type?: string
+          role_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "job_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      responses: {
+        Row: {
+          ai_feedback: string | null
+          audio_url: string | null
+          clarity_score: number | null
+          confidence_score: number | null
+          created_at: string
+          facial_analysis: Json | null
+          id: string
+          question_id: string | null
+          session_id: string | null
+          transcript: string | null
+          video_url: string | null
+          voice_analysis: Json | null
+        }
+        Insert: {
+          ai_feedback?: string | null
+          audio_url?: string | null
+          clarity_score?: number | null
+          confidence_score?: number | null
+          created_at?: string
+          facial_analysis?: Json | null
+          id?: string
+          question_id?: string | null
+          session_id?: string | null
+          transcript?: string | null
+          video_url?: string | null
+          voice_analysis?: Json | null
+        }
+        Update: {
+          ai_feedback?: string | null
+          audio_url?: string | null
+          clarity_score?: number | null
+          confidence_score?: number | null
+          created_at?: string
+          facial_analysis?: Json | null
+          id?: string
+          question_id?: string | null
+          session_id?: string | null
+          transcript?: string | null
+          video_url?: string | null
+          voice_analysis?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "interview_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +227,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      interview_status: "pending" | "completed" | "in_progress"
     }
     CompositeTypes: {
       [_ in never]: never
