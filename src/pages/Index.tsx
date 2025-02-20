@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, Video, Mic, ChartBar, File, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const features = [
   {
@@ -39,9 +41,23 @@ const features = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    checkUser();
+  }, []);
 
   const startInterview = () => {
-    navigate("/setup");
+    if (user) {
+      navigate("/setup");
+    } else {
+      navigate("/auth");
+    }
   };
 
   return (
@@ -59,12 +75,12 @@ const Index = () => {
             size="lg"
             className="mt-8 animate-fade-in"
           >
-            Start Practice Interview
+            {user ? "Start Practice Interview" : "Sign In to Start"}
           </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <Card 
               key={feature.title}
               className="border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow duration-300"
